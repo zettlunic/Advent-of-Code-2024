@@ -7,5 +7,4 @@
 
 import Foundation
 
-print("Hello, World!")
-
+Executor.execute(Day01.self)
