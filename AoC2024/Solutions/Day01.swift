@@ -6,8 +6,6 @@
 //
 
 enum Day01: Day {
-    static let dayNumber = 1
-
     static let input = """
 57643   17620
 19062   47340

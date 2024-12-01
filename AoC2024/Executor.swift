@@ -16,7 +16,7 @@ enum Executor {
     }()
 
     static func execute<T: Day>(_ day: T.Type) {
-        print("Day \(day.dayNumber)")
+        print(String(describing: day))
         execute(part: day.part1)
         execute(part: day.part2)
     }
