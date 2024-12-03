@@ -2,11 +2,10 @@
 //  Day01.swift
 //  AoC2024
 //
-//  Created by Roman Mirzoyan on 01.12.24.
+//  Created by Marcel Zanoni on 02.12.24.
 //
 
 enum Day01: Day {
-    static let input = """
 57643   17620
 19062   47340
 11105   16109
@@ -1008,40 +1007,60 @@ enum Day01: Day {
 78254   68306
 28704   60454
 """
+        """
+    }
 
     static func part1() -> Int {
-        let pairs = Self.input
-            .split(separator: "\n")
-            .map { lines in
-                lines
-                    .split(separator: "   ")
-                    .compactMap { num in
-                        Int(String(num))
-                    }
+        let pairs = input.split(separator: "\n")
+        let alternating = pairs.flatMap { $0.split(separator: "   ") }
+        var left = [Int]()
+        var right = [Int]()
+        for i in 0...alternating.count - 1 {
+            if i % 2 == 0 {
+                right.append(Int(alternating[i])!)
+            } else {
+                left.append(Int(alternating[i])!)
             }
+        }
 
-        let left = pairs.map({ $0[0] }).sorted()
-        let right = pairs.map({ $0[1] }).sorted()
+        left = left.sorted()
+        right = right.sorted()
 
-        return zip(left, right).reduce(0, { $0 + abs($1.0 - $1.1) })
+        var distances = [Int]()
+
+        for i in 0...left.count - 1 {
+            let l = left[i]
+            let r = right[i]
+            let distance = abs(l - r)
+            distances.append(distance)
+        }
+
+        return distances.reduce(0, +)
     }
 
     static func part2() -> Int {
-        let pairs = Self.input
-            .split(separator: "\n")
-            .map { lines in
-                lines
-                    .split(separator: "   ")
-                    .compactMap { num in
-                        Int(String(num))
-                    }
+        let pairs = input.split(separator: "\n")
+        let alternating = pairs.flatMap { $0.split(separator: "   ") }
+        var left = [Int]()
+        var right = [Int]()
+        for i in 0...alternating.count - 1 {
+            if i % 2 == 0 {
+                right.append(Int(alternating[i])!)
+            } else {
+                left.append(Int(alternating[i])!)
+            }
+        }
+
+        var score = 0
+
+        for l in left {
+            let occurrences = right.count { r in
+                r == l
             }
 
-        let left = pairs.map({ $0[0] })
-        let right = pairs.map({ $0[1] })
+            score += l * occurrences
+        }
 
-        return left.reduce(0, { partialResult, leftElement in
-            partialResult + leftElement * right.count(where: { $0 == leftElement })
-        })
+        return score
     }
 }
