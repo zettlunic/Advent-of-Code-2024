@@ -7,7 +7,6 @@
 
 enum Day04: Day {
     static var input: String {
-        // Example
         """
         MMMSXXMASM
         MSAMXMSMSA
@@ -52,7 +51,9 @@ enum Day04: Day {
             for k in 0..<numberOfDiagonals {
                 var diagonal = [Character]()
 
-                for i in (max(0, k - width + 1))..<(min(k + 1, height)) {
+                for i
+                    in (max(0, k - width + 1))..<(min(k + 1, height))
+                {
                     let j = k - i
                     diagonal.append(charLines[i][j])
                 }
@@ -62,7 +63,31 @@ enum Day04: Day {
             return diagonals
         }
 
-        let pattern = Regex(/XMAS|SAMX/)
+        func antiDiagonals(_ matrix: [[Character]]) -> [[Character]] {
+            let width = matrix.first!.count
+            let height = matrix.count
+
+            let numberOfDiagonals = width + height - 1
+
+            var diagonals = [[Character]]()
+
+            for k in 0..<numberOfDiagonals {
+                var diagonal = [Character]()
+
+                for i
+                    in (max(0, k - width + 1))..<(min(k + 1, height))
+                {
+                    let j = (width - 1) - k + i
+                    diagonal.append(charLines[i][j])
+                }
+                diagonals.append(diagonal)
+            }
+
+            return diagonals
+        }
+
+        let fwPattern = Regex(/XMAS/)
+        let rvPattern = Regex(/SAMX/)
         var matches = 0
         let lines = input.split(separator: "\n")
         let charLines: [[Character]] = lines.map {
@@ -71,7 +96,8 @@ enum Day04: Day {
 
         // 1. Count forwards & backwards in lines
         for line in lines {
-            matches += line.ranges(of: pattern).count
+            matches += line.ranges(of: fwPattern).count
+            matches += line.ranges(of: rvPattern).count
         }
 
         // 2. Count forwards & backwards in columns
@@ -81,17 +107,56 @@ enum Day04: Day {
         rotated.map {
             String($0)
         }.forEach {
-            matches += $0.ranges(of: pattern).count
+            matches += $0.ranges(of: fwPattern).count
+            matches += $0.ranges(of: rvPattern).count
         }
 
         // 3. Count forwards and backwards in diagonals
-        diagonals(charLines).map { String($0) }.forEach { matches += $0.ranges(of: pattern).count }
-        diagonals(rotated).map { String($0) }.forEach { matches += $0.ranges(of: pattern).count }
+        diagonals(charLines).map { String($0) }.forEach {
+            matches += $0.ranges(of: fwPattern).count
+        }
+        diagonals(charLines).map { String($0) }.forEach {
+            matches += $0.ranges(of: rvPattern).count
+        }
+        antiDiagonals(charLines).map { String($0) }.forEach {
+            matches += $0.ranges(of: fwPattern).count
+        }
+        antiDiagonals(charLines).map { String($0) }.forEach {
+            matches += $0.ranges(of: rvPattern).count
+        }
 
         return matches
     }
 
     static func part2() -> Int {
-        0
+        var matches = 0
+        let lines = input.split(separator: "\n")
+        let matrix: [[Character]] = lines.map {
+            Array($0)
+        }
+
+        for (i, line) in matrix.enumerated() {
+            if i == 0 || i == matrix.count - 1 { continue }
+            for (j, char) in line.enumerated() {
+                if j == 0 || j == matrix.first!.count - 1 { continue }
+
+                guard char == "A" else { continue }
+
+                let topLeft = matrix[i - 1][j - 1]
+                let topRight = matrix[i - 1][j + 1]
+                let bottomLeft = matrix[i + 1][j - 1]
+                let bottomRight = matrix[i + 1][j + 1]
+
+                if (topLeft == "M" && bottomRight == "S"
+                    || topLeft == "S" && bottomRight == "M")
+                    && (topRight == "M" && bottomLeft == "S"
+                        || topRight == "S" && bottomLeft == "M")
+                {
+                    matches += 1
+                }
+            }
+        }
+
+        return matches
     }
 }
