@@ -88,14 +88,7 @@ enum Day05: Day {
                 $0.split(separator: ",").map { Int($0)! }
             }
 
-        struct PrintAndRules {
-            let print: [Int]
-            let rules: [(Int, Int)]
-            let errors: [Int]
-        }
-
-        func evaluate(_ pages: [Int], rules: [(Int, Int)]) -> [(Int,Int)] {
-            var brokenRules = [(Int,Int)]()
+        func findFirstError(_ pages: [Int], rules: [(Int, Int)]) -> (Int, (Int,Int))? {
             for (i, page) in pages.enumerated() {
                 let rules = rules.filter({ $0.0 == page })
 
@@ -103,73 +96,31 @@ enum Day05: Day {
                     let beforePage = rule.1
 
                     if let firstIndex = pages.firstIndex(of: beforePage), firstIndex < i {
-                        brokenRules.append(rule)
+                        return (i, rule)
                     }
                 }
             }
-
-            return brokenRules
+            return nil
         }
 
-        var incorrectPrints = [PrintAndRules]()
+        var sum = 0
         for pages in listOfPages {
-            var compliant = true
-            var applicableRules = [(Int, Int)]()
-            var errors = [Int]()
+            var firstError = findFirstError(pages, rules: rules)
+            var swapped = pages
 
-            for (i, page) in pages.enumerated() {
-                let rules = rules.filter({ $0.0 == page })
-                applicableRules.append(contentsOf: rules)
+            if firstError == nil { continue }
 
-                for rule in rules {
-                    let beforePage = rule.1
+            while firstError != nil {
+                let rule = firstError!.1
+                let otherIndex = swapped.firstIndex(of: rule.1)!
+                swapped.swapAt(firstError!.0, otherIndex)
 
-                    if let firstIndex = pages.firstIndex(of: beforePage), firstIndex < i {
-                        compliant = false
-                        errors.append(i)
-                        break
-                    }
-                }
+                firstError = findFirstError(swapped, rules: rules)
             }
 
-            if !compliant {
-                incorrectPrints.append(PrintAndRules(print: pages, rules: applicableRules, errors: errors))
-            }
+            sum += swapped[swapped.count / 2]
         }
 
-        var corrected = [[Int]]()
-        for printAndRules in incorrectPrints {
-//            print("Page: \(printAndRules.print)\nRules: \(printAndRules.rules)\nErrors: \(printAndRules.errors)")
-
-            var currentErrors = printAndRules.errors.count
-            var currentPage = [Int]()
-            for error in printAndRules.errors {
-                let otherIndizes = Set(printAndRules.print.indices).subtracting(Set([error]))
-
-                for otherIndex in otherIndizes {
-                    var swapped = printAndRules.print
-                    swapped.swapAt(error, otherIndex)
-                    currentPage = swapped
-
-                    let brokenRules = evaluate(swapped, rules: printAndRules.rules)
-                        .filter { rule in
-                            rule.0 == printAndRules.print[error]
-                    }
-
-                    if brokenRules.count < currentErrors {
-                        currentErrors = brokenRules.count
-                        continue
-                    }
-                }
-            }
-
-            if currentErrors == 0 {
-                print("Solved: \(currentPage)")
-                corrected.append(currentPage)
-            }
-        }
-
-        fatalError()
-        return 0
+        return sum
     }
 }
