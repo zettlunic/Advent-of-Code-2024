@@ -88,7 +88,8 @@ enum Day05: Day {
                 $0.split(separator: ",").map { Int($0)! }
             }
 
-        func findFirstError(_ pages: [Int], rules: [(Int, Int)]) -> (Int, (Int,Int))? {
+        func findAllErrors(_ pages: [Int], rules: [(Int, Int)]) -> [(Int, (Int,Int))] {
+            var errors = [(Int, (Int,Int))]()
             for (i, page) in pages.enumerated() {
                 let rules = rules.filter({ $0.0 == page })
 
@@ -96,26 +97,28 @@ enum Day05: Day {
                     let beforePage = rule.1
 
                     if let firstIndex = pages.firstIndex(of: beforePage), firstIndex < i {
-                        return (i, rule)
+                        errors.append((i, rule))
                     }
                 }
             }
-            return nil
+            return errors
         }
 
         var sum = 0
         for pages in listOfPages {
-            var firstError = findFirstError(pages, rules: rules)
+            var errors = findAllErrors(pages, rules: rules)
             var swapped = pages
 
-            if firstError == nil { continue }
+            if errors.isEmpty { continue }
 
-            while firstError != nil {
-                let rule = firstError!.1
-                let otherIndex = swapped.firstIndex(of: rule.1)!
-                swapped.swapAt(firstError!.0, otherIndex)
+            while !errors.isEmpty {
+                for error in errors {
+                    let rule = error.1
+                    let otherIndex = swapped.firstIndex(of: rule.1)!
+                    swapped.swapAt(error.0, otherIndex)
+                }
 
-                firstError = findFirstError(swapped, rules: rules)
+                errors = findAllErrors(swapped, rules: rules)
             }
 
             sum += swapped[swapped.count / 2]
