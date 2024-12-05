@@ -138,34 +138,47 @@ enum Day05: Day {
         }
 
         var corrected = [[Int]]()
+
         for printAndRules in incorrectPrints {
-//            print("Page: \(printAndRules.print)\nRules: \(printAndRules.rules)\nErrors: \(printAndRules.errors)")
 
-            var currentErrors = printAndRules.errors.count
-            var currentPage = [Int]()
-            for error in printAndRules.errors {
-                let otherIndizes = Set(printAndRules.print.indices).subtracting(Set([error]))
+            func correct(_ print: PrintAndRules) -> (Int, [Int]) {
+//                print("Page: \(printAndRules.print)\nRules: \(printAndRules.rules)\nErrors: \(printAndRules.errors)")
 
-                for otherIndex in otherIndizes {
-                    var swapped = printAndRules.print
-                    swapped.swapAt(error, otherIndex)
-                    currentPage = swapped
+                var currentErrors = printAndRules.errors
+                var currentPage = printAndRules.print
+                for error in printAndRules.errors {
+                    let otherIndizes = Set(printAndRules.print.indices).subtracting(Set([error]))
 
-                    let brokenRules = evaluate(swapped, rules: printAndRules.rules)
-                        .filter { rule in
-                            rule.0 == printAndRules.print[error]
-                    }
+                    for otherIndex in otherIndizes {
+                        var swapped = currentPage
+                        swapped.swapAt(error, otherIndex)
 
-                    if brokenRules.count < currentErrors {
-                        currentErrors = brokenRules.count
-                        continue
+                        let brokenRules = evaluate(swapped, rules: printAndRules.rules)
+                        //                        .filter { rule in
+                        //                            rule.0 == printAndRules.print[error]
+                        //                    }
+
+                        if brokenRules.count < currentErrors.count {
+                            currentErrors = brokenRules
+                            currentPage = swapped
+                            continue
+                        }
                     }
                 }
+                return (currentErrors, currentPage)
             }
 
+            let currentResult = correct(printAndRules)
+            let currentErrors = currentResult.0
+
             if currentErrors == 0 {
-                print("Solved: \(currentPage)")
-                corrected.append(currentPage)
+                print("Solved: \(currentResult.1)")
+                corrected.append(currentResult.1)
+            } else {
+                correct(PrintAndRules(
+                    print: currentResult.1,
+                    rules: printAndRules.rules,
+                    errors: currentResult))
             }
         }
 
