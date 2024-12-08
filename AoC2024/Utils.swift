@@ -22,4 +22,30 @@ extension Grid {
             partialResult.appending(String(row + ["\n"]))
         }
     }
+
+    func column(_ index: Int) -> [Character] {
+        self.map {
+            $0[index]
+        }
+    }
+
+    func row(_ index: Int) -> [Character] {
+        self[index]
+    }
+}
+
+extension Collection {
+    func windows(of count: Int) -> UnfoldSequence<SubSequence,Index> {
+        sequence(state: startIndex) { start in
+            guard start < endIndex,
+                  let end = index(
+                    start,
+                    offsetBy: count,
+                    limitedBy: endIndex
+                  )
+            else { return nil }
+            defer { formIndex(after: &start) }
+            return self[start..<end]
+        }
+    }
 }
