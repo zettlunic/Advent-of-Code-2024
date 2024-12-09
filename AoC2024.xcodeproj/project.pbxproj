@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		1F4446DC2D06F2F0000A473E /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 1F4446DB2D06F2F0000A473E /* Algorithms */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		CABC03402CFC520700C0C069 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -35,6 +39,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F4446DC2D06F2F0000A473E /* Algorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,6 +82,7 @@
 			);
 			name = AoC2024;
 			packageProductDependencies = (
+				1F4446DB2D06F2F0000A473E /* Algorithms */,
 			);
 			productName = AoC2024;
 			productReference = CABC03422CFC520700C0C069 /* AoC2024 */;
@@ -106,6 +112,9 @@
 			);
 			mainGroup = CABC03392CFC520700C0C069;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				1F4446DA2D06F2F0000A473E /* XCRemoteSwiftPackageReference "swift-algorithms" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CABC03432CFC520700C0C069 /* Products */;
 			projectDirPath = "";
@@ -289,6 +298,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		1F4446DA2D06F2F0000A473E /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-algorithms";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1F4446DB2D06F2F0000A473E /* Algorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1F4446DA2D06F2F0000A473E /* XCRemoteSwiftPackageReference "swift-algorithms" */;
+			productName = Algorithms;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CABC033A2CFC520700C0C069 /* Project object */;
 }

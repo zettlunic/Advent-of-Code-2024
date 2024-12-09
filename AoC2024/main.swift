@@ -12,4 +12,5 @@ import Foundation
 // Executor.execute(Day03.self)
 // Executor.execute(Day04.self)
 // Executor.execute(Day05.self)
-Executor.execute(Day06.self)
+// Executor.execute(Day06.self)
+Executor.execute(Day07.self)

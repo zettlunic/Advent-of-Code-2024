@@ -8,8 +8,14 @@
 typealias Grid = [[Character]]
 
 extension String {
+    func lines() -> [String] {
+        self.split(separator: "\n").map { String($0) }
+    }
+}
+
+extension String {
     func grid() -> Grid {
-        self.split(separator: "\n")
+        self.lines()
             .map {
                 Array($0)
             }
@@ -47,5 +53,54 @@ extension Collection {
             defer { formIndex(after: &start) }
             return self[start..<end]
         }
+    }
+}
+
+struct CombinationsWithRepetition<C: Collection> : Sequence {
+
+    let base: C
+    let length: Int
+
+    init(of base: C, length: Int) {
+        self.base = base
+        self.length = length
+    }
+
+    struct Iterator : IteratorProtocol {
+        let base: C
+
+        var firstIteration = true
+        var finished: Bool
+        var positions: [C.Index]
+
+        init(of base: C, length: Int) {
+            self.base = base
+            finished = base.isEmpty
+            positions = Array(repeating: base.startIndex, count: length)
+        }
+
+        mutating func next() -> [C.Element]? {
+            if firstIteration {
+                firstIteration = false
+            } else {
+                // Update indices for next combination.
+                finished = true
+                for i in positions.indices.reversed() {
+                    base.formIndex(after: &positions[i])
+                    if positions[i] != base.endIndex {
+                        finished = false
+                        break
+                    } else {
+                        positions[i] = base.startIndex
+                    }
+                }
+
+            }
+            return finished ? nil : positions.map { base[$0] }
+        }
+    }
+
+    func makeIterator() -> Iterator {
+        return Iterator(of: base, length: length)
     }
 }
