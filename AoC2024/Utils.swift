@@ -104,3 +104,22 @@ struct CombinationsWithRepetition<C: Collection> : Sequence {
         return Iterator(of: base, length: length)
     }
 }
+
+extension ClosedRange where Bound == Unicode.Scalar {
+    static let asciiPrintable: ClosedRange = " "..."~"
+    var range: ClosedRange<UInt32>  { lowerBound.value...upperBound.value }
+    var scalars: [Unicode.Scalar]   { range.compactMap(Unicode.Scalar.init) }
+    var characters: [Character]     { scalars.map(Character.init) }
+    var string: String              { String(scalars) }
+}
+
+extension String {
+    init<S: Sequence>(_ sequence: S) where S.Element == Unicode.Scalar {
+        self.init(UnicodeScalarView(sequence))
+    }
+}
+
+struct Position: Hashable {
+    let x: Int
+    let y: Int
+}
